@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Форма Чату</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <form class="auth-form" onsubmit="return false;">
+                <input
+                    type="text"
+                    placeholder="Введіть нікнейм"
+                    id="nickname"
+                />
+                <button type="submit" id="loginBtn">Авторизуватися</button>
+            </form>
+
+            <p id="chatOutput"></p>
+
+            <form class="message-form" onsubmit="return false;">
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Введіть повідомлення"
+                />
+                <button type="submit" id="sendBtn">Відправити</button>
+            </form>
+        </div>
+
+        <script src="buttons.js"></script>
+    </body>
+</html>
