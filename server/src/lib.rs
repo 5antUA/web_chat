@@ -1,3 +1,5 @@
+mod data;
+
 use actix_cors::Cors;
 use actix_web::{App, HttpResponse, HttpServer, Responder, web};
 
@@ -28,6 +30,6 @@ async fn get_hello() -> impl Responder {
 }
 
 #[actix_web::post("/json")]
-async fn test_json(data: String) -> impl Responder {
-    HttpResponse::Ok().body(format!("data: {}", data))
+async fn test_json(data: web::Json<data::User>) -> impl Responder {
+    HttpResponse::Ok().body(format!("Name {} with id", data.get_name()))
 }
