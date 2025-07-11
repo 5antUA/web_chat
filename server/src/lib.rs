@@ -14,7 +14,7 @@ pub async fn run() -> Result<(), std::io::Error> {
             )
             .app_data(web::Data::new(data::AppData {
                 app_name: String::from("web_chat"),
-                author_name: String::from("Rostyslav"),
+                author_name: String::from("Rostikus"),
                 version: 1,
             }))
             .service(
@@ -29,9 +29,9 @@ pub async fn run() -> Result<(), std::io::Error> {
     .await
 }
 
-#[actix_web::get("/hello")]
+#[actix_web::get("/user")]
 async fn get_hello() -> impl Responder {
-    HttpResponse::Ok().body("hello_world! (v0.1)")
+    HttpResponse::Ok().body("some user")
 }
 
 #[actix_web::post("/json")]
