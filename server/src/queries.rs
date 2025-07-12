@@ -1,26 +1,21 @@
-use crate::data;
+use crate::AppData;
+use crate::models::user::User;
+
 use actix_web::{HttpResponse, Responder, web};
+use diesel::prelude::*;
 
 #[actix_web::get("/user")]
-async fn get_hello() -> impl Responder {
-    HttpResponse::Ok().body("some user")
-}
+async fn get_user(app_data: web::Data<AppData>) -> impl Responder {
+    use crate::schema::users::dsl::*;
 
-#[actix_web::post("/json")]
-async fn test_json(data: web::Json<data::User>) -> impl Responder {
-    HttpResponse::Ok().body(format!(
-        "Name {} with id {}",
-        data.get_name(),
-        data.get_id()
-    ))
-}
+    let pool = &app_data.pool;
+    let mut connection = pool.get().unwrap();
 
-#[actix_web::get("/data")]
-async fn get_app_data(data: web::Data<data::AppData>) -> impl Responder {
-    let app_data = format!(
-        "app: {}, author: {}, version: {}",
-        data.app_name, data.author_name, data.version
-    );
+    let result = users
+        .filter(username.eq("FantUA"))
+        .select(User::as_select())
+        .load(&mut connection)
+        .unwrap();
 
-    HttpResponse::Ok().body(app_data)
+    HttpResponse::Ok().body(format!("UPDATED DATA : \n{:?}", result.get(0).unwrap()))
 }

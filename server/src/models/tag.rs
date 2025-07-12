@@ -5,7 +5,7 @@ use diesel::prelude::*;
 #[diesel(table_name = crate::schema::tags)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Tag {
-    id: i32,
-    tag_name: String,
-    created_at: NaiveDateTime,
+    pub id: i32,
+    pub tag_name: String,
+    pub created_at: NaiveDateTime,
 }

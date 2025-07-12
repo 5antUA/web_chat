@@ -5,10 +5,10 @@ use diesel::prelude::*;
 #[diesel(table_name = crate::schema::profiles)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Profile {
-    id: i32,
-    fk_user_id: i32,
-    age: i32,
-    bio: Option<String>,
-    avatar_url: Option<String>,
-    created_at: NaiveDateTime,
+    pub id: i32,
+    pub fk_user_id: i32,
+    pub age: i32,
+    pub bio: Option<String>,
+    pub avatar_url: Option<String>,
+    pub created_at: NaiveDateTime,
 }

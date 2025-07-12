@@ -1,16 +1,28 @@
-pub mod data;
-// pub mod models;
-pub mod queries;
+pub mod models;
+mod queries;
 pub mod schema;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
+use diesel::{
+    PgConnection,
+    r2d2::{ConnectionManager, Pool},
+};
 
-use diesel::prelude::*;
-use std::env;
+type ConnectionPool = Pool<ConnectionManager<PgConnection>>;
 
-pub async fn run() -> Result<(), std::io::Error> {
-    HttpServer::new(|| {
+pub struct AppData {
+    pub app_name: String,
+    pub pool: ConnectionPool,
+}
+
+pub async fn run(pool: ConnectionPool) -> Result<(), std::io::Error> {
+    let app_data = web::Data::new(AppData {
+        app_name: String::from("web_chat"),
+        pool
+    });
+
+    HttpServer::new(move || {
         App::new()
             .wrap(
                 Cors::default()
@@ -18,16 +30,10 @@ pub async fn run() -> Result<(), std::io::Error> {
                     .allow_any_header()
                     .allow_any_method(),
             )
-            .app_data(web::Data::new(data::AppData {
-                app_name: String::from("web_chat"),
-                author_name: String::from("Rostikus"),
-                version: 1,
-            }))
+            .app_data(app_data.clone())
             .service(
                 web::scope("/api")
-                    .service(queries::get_hello)
-                    .service(queries::test_json)
-                    .service(queries::get_app_data),
+                    .service(queries::get_user)
             )
     })
     .bind(("127.0.0.1", 8080))?
@@ -35,9 +41,10 @@ pub async fn run() -> Result<(), std::io::Error> {
     .await
 }
 
-pub async fn establish_connection() -> Result<PgConnection, Box<dyn std::error::Error>> {
-    let database_url = env::var("DATABASE_URL")?;
-    let pg_connection = PgConnection::establish(&database_url)?;
+pub async fn establish_connection() -> Result<ConnectionPool, Box<dyn std::error::Error>> {
+    let database_url = std::env::var("DATABASE_URL")?;
+    let manager = ConnectionManager::<PgConnection>::new(database_url);
+    let pool = Pool::builder().build(manager)?;
 
-    Ok(pg_connection)
+    Ok(pool)
 }
