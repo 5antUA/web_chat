@@ -1,11 +1,14 @@
+use dotenvy::dotenv;
 use std::process;
 
 #[actix_web::main]
 async fn main() {
-    let pg_connection = match server::establish_connection().await {
+    dotenv().ok();
+
+    let _ = match server::establish_connection().await {
         Ok(conn) => conn,
-        Err(e) => {
-            eprintln!("Database connection error: {}", e);
+        Err(error) => {
+            eprintln!("Database connection error: {}", error);
             process::exit(1);
         }
     };

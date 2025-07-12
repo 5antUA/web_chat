@@ -9,7 +9,7 @@ pub struct User {
 pub struct AppData {
     pub app_name: String,
     pub author_name: String,
-    pub version: i16
+    pub version: i16,
 }
 
 impl User {

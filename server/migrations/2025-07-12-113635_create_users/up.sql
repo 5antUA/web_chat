@@ -3,7 +3,7 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
-    email TEXT UNIQUE,
-    password_hash TEXT,
-    created_at TIMESTAMP DEFAULT now()
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
 )

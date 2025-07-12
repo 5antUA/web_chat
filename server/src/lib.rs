@@ -1,11 +1,12 @@
-mod data;
-mod queries;
+pub mod data;
+// pub mod models;
+pub mod queries;
+pub mod schema;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
 
 use diesel::prelude::*;
-use dotenvy::dotenv;
 use std::env;
 
 pub async fn run() -> Result<(), std::io::Error> {
@@ -35,8 +36,6 @@ pub async fn run() -> Result<(), std::io::Error> {
 }
 
 pub async fn establish_connection() -> Result<PgConnection, Box<dyn std::error::Error>> {
-    dotenv().ok();
-
     let database_url = env::var("DATABASE_URL")?;
     let pg_connection = PgConnection::establish(&database_url)?;
 
