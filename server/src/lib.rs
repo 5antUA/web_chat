@@ -1,7 +1,12 @@
 mod data;
+mod queries;
 
 use actix_cors::Cors;
-use actix_web::{App, HttpResponse, HttpServer, Responder, web};
+use actix_web::{App, HttpServer, web};
+
+use diesel::prelude::*;
+use dotenvy::dotenv;
+use std::env;
 
 pub async fn run() -> Result<(), std::io::Error> {
     HttpServer::new(|| {
@@ -19,9 +24,9 @@ pub async fn run() -> Result<(), std::io::Error> {
             }))
             .service(
                 web::scope("/api")
-                    .service(get_hello)
-                    .service(test_json)
-                    .service(get_app_data),
+                    .service(queries::get_hello)
+                    .service(queries::test_json)
+                    .service(queries::get_app_data),
             )
     })
     .bind(("127.0.0.1", 8080))?
@@ -29,26 +34,11 @@ pub async fn run() -> Result<(), std::io::Error> {
     .await
 }
 
-#[actix_web::get("/user")]
-async fn get_hello() -> impl Responder {
-    HttpResponse::Ok().body("some user")
-}
+pub async fn establish_connection() -> Result<PgConnection, Box<dyn std::error::Error>> {
+    dotenv().ok();
 
-#[actix_web::post("/json")]
-async fn test_json(data: web::Json<data::User>) -> impl Responder {
-    HttpResponse::Ok().body(format!(
-        "Name {} with id {}",
-        data.get_name(),
-        data.get_id()
-    ))
-}
+    let database_url = env::var("DATABASE_URL")?;
+    let pg_connection = PgConnection::establish(&database_url)?;
 
-#[actix_web::get("/data")]
-async fn get_app_data(data: web::Data<data::AppData>) -> impl Responder {
-    let app_data = format!(
-        "app: {}, author: {}, version: {}",
-        data.app_name, data.author_name, data.version
-    );
-
-    HttpResponse::Ok().body(app_data)
+    Ok(pg_connection)
 }
