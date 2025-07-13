@@ -1,5 +1,5 @@
 pub mod models;
-mod queries;
+mod router;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
@@ -25,7 +25,10 @@ pub async fn run(pool: Pool<Postgres>) -> Result<(), std::io::Error> {
                     .allow_any_method(),
             )
             .app_data(app_data.clone())
-            .service(web::scope("/api").service(queries::get_user))
+            .service(
+                web::scope("/api")
+                    .service(router::get_user_by_id)
+            )
     })
     .bind(("127.0.0.1", 8080))?
     .run()

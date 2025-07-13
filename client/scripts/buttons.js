@@ -29,15 +29,12 @@ loginBtn.addEventListener("click", function () {
         return;
     }
 
-    fetch(concatPath("/json"), {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, id: 1 }),
-    })
-        .then((data) => data.text())
-        .then((data) => (userInfo.textContent = `${data}`));
+    fetch(concatPath(`/user/${name}`))
+        .then((data) => data.json())
+        .then((data) => (userInfo.textContent = `Вітаємо, ${data.username}!`))
+        .catch(_ => {
+            userInfo.textContent = "Вибачте, такого користувача не знайдено.";
+        });
 });
 
 function isNullOrEmpty(string) {

@@ -1,8 +1,8 @@
 use chrono::NaiveDateTime;
-use serde::Deserialize;
-use sqlx::{types::Uuid, FromRow};
+use serde::{Deserialize, Serialize};
+use sqlx::{FromRow, types::Uuid};
 
-#[derive(Debug, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
     pub id: i32,
     pub username: String,
