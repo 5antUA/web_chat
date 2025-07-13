@@ -1,25 +1,19 @@
 pub mod models;
 mod queries;
-pub mod schema;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
-use diesel::{
-    PgConnection,
-    r2d2::{ConnectionManager, Pool},
-};
-
-type ConnectionPool = Pool<ConnectionManager<PgConnection>>;
+use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
 pub struct AppData {
     pub app_name: String,
-    pub pool: ConnectionPool,
+    pub pool: Pool<Postgres>,
 }
 
-pub async fn run(pool: ConnectionPool) -> Result<(), std::io::Error> {
+pub async fn run(pool: Pool<Postgres>) -> Result<(), std::io::Error> {
     let app_data = web::Data::new(AppData {
         app_name: String::from("web_chat"),
-        pool
+        pool,
     });
 
     HttpServer::new(move || {
@@ -31,20 +25,19 @@ pub async fn run(pool: ConnectionPool) -> Result<(), std::io::Error> {
                     .allow_any_method(),
             )
             .app_data(app_data.clone())
-            .service(
-                web::scope("/api")
-                    .service(queries::get_user)
-            )
+            .service(web::scope("/api").service(queries::get_user))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
 
-pub async fn establish_connection() -> Result<ConnectionPool, Box<dyn std::error::Error>> {
+pub async fn establish_connection() -> Result<Pool<Postgres>, Box<dyn std::error::Error>> {
     let database_url = std::env::var("DATABASE_URL")?;
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = Pool::builder().build(manager)?;
+    let pg_pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await?;
 
-    Ok(pool)
+    Ok(pg_pool)
 }

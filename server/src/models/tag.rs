@@ -1,9 +1,8 @@
 use chrono::NaiveDateTime;
-use diesel::prelude::*;
+use serde::Deserialize;
+use sqlx::FromRow;
 
-#[derive(Queryable, Selectable)]
-#[diesel(table_name = crate::schema::tags)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Debug, Deserialize, FromRow)]
 pub struct Tag {
     pub id: i32,
     pub tag_name: String,

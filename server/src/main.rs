@@ -5,7 +5,7 @@ use std::process;
 async fn main() {
     dotenv().ok();
 
-    let connection_pool = match server::establish_connection().await {
+    let pg_pool = match server::establish_connection().await {
         Ok(pool) => pool,
         Err(error) => {
             eprintln!("Database connection error: {}", error);
@@ -13,7 +13,7 @@ async fn main() {
         }
     };
 
-    if let Err(error) = server::run(connection_pool).await {
+    if let Err(error) = server::run(pg_pool).await {
         eprintln!("Running server error: {}", error);
         process::exit(1);
     }

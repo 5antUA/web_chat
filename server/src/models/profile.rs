@@ -1,9 +1,8 @@
 use chrono::NaiveDateTime;
-use diesel::prelude::*;
+use serde::Deserialize;
+use sqlx::FromRow;
 
-#[derive(Queryable, Selectable)]
-#[diesel(table_name = crate::schema::profiles)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Debug, Deserialize, FromRow)]
 pub struct Profile {
     pub id: i32,
     pub fk_user_id: i32,
