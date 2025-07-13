@@ -29,7 +29,11 @@ pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
                     .allow_any_method(),
             )
             .app_data(app_data.clone())
-            .service(web::scope("/api").service(user_controller::get_user_by_id))
+            .service(
+                web::scope("/api")
+                    .service(user_controller::get_user_by_id)
+                    .service(user_controller::add_user),
+            )
     })
     .bind(("127.0.0.1", 8080))?
     .run()
