@@ -29,7 +29,7 @@ loginBtn.addEventListener("click", function () {
         return;
     }
 
-    fetch(concatPath(`/user/${name}`))
+    fetch(concatPath(`/users/${name}`))
         .then((data) => data.json())
         .then((data) => (userInfo.textContent = `Вітаємо, ${data.username}!`))
         .catch(_ => {

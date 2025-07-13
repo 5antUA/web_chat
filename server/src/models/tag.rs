@@ -1,8 +1,8 @@
 use chrono::NaiveDateTime;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-#[derive(Debug, Deserialize, FromRow)]
+#[derive(Debug, Deserialize, Serialize, FromRow)]
 pub struct Tag {
     pub id: i32,
     pub tag_name: String,

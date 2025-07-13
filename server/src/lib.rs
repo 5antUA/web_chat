@@ -1,16 +1,20 @@
+pub mod controllers;
 pub mod models;
-mod router;
+pub mod repositories;
+pub mod services;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
-use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+use sqlx::{PgPool, postgres::PgPoolOptions};
+
+use controllers::user_controller;
 
 pub struct AppData {
     pub app_name: String,
-    pub pool: Pool<Postgres>,
+    pub pool: PgPool,
 }
 
-pub async fn run(pool: Pool<Postgres>) -> Result<(), std::io::Error> {
+pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
     let app_data = web::Data::new(AppData {
         app_name: String::from("web_chat"),
         pool,
@@ -25,17 +29,14 @@ pub async fn run(pool: Pool<Postgres>) -> Result<(), std::io::Error> {
                     .allow_any_method(),
             )
             .app_data(app_data.clone())
-            .service(
-                web::scope("/api")
-                    .service(router::get_user_by_id)
-            )
+            .service(web::scope("/api").service(user_controller::get_user_by_id))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
 
-pub async fn establish_connection() -> Result<Pool<Postgres>, Box<dyn std::error::Error>> {
+pub async fn establish_connection() -> Result<PgPool, Box<dyn std::error::Error>> {
     let database_url = std::env::var("DATABASE_URL")?;
     let pg_pool = PgPoolOptions::new()
         .max_connections(5)
