@@ -5,8 +5,8 @@ use crate::{
 
 use sqlx::PgPool;
 
-pub async fn get_user_by_id(username: String, pool: &PgPool) -> Result<User, String> {
-    user_repository::get_user_by_id(username, pool)
+pub async fn get_user(username: String, pool: &PgPool) -> Result<User, String> {
+    user_repository::get_user(username, pool)
         .await
         .map_err(|e| e.to_string())
 }

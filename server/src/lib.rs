@@ -4,8 +4,6 @@ pub mod repositories;
 pub mod routers;
 pub mod services;
 
-use crate::routers::user_router;
-
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
 use sqlx::{PgPool, postgres::PgPoolOptions};
@@ -25,7 +23,7 @@ pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
         App::new()
             .wrap(Cors::permissive())
             .app_data(app_data.clone())
-            .service(web::scope("/api").configure(user_router::configure_user_routes))
+            .service(web::scope("/api").configure(routers::configure_routes_all))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
