@@ -7,7 +7,7 @@ use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
 use sqlx::{PgPool, postgres::PgPoolOptions};
 
-use controllers::user_controller;
+use crate::controllers::user_controller;
 
 pub struct AppData {
     pub app_name: String,
@@ -25,13 +25,13 @@ pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
             .wrap(
                 Cors::default()
                     .allow_any_origin()
-                    .allow_any_header()
+                    .allow_any_header() 
                     .allow_any_method(),
             )
             .app_data(app_data.clone())
             .service(
                 web::scope("/api")
-                    .service(user_controller::get_user_by_id)
+                    .service(user_controller::get_user_by_username)
                     .service(user_controller::add_user),
             )
     })

@@ -1,10 +1,11 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
+use sqlx::prelude::FromRow;
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize, Serialize, FromRow)]
-pub struct Tag {
-    pub id: i32,
-    pub tag_name: String,
+pub struct Role {
+    pub id: Uuid,
+    pub role_name: String,
     pub created_at: NaiveDateTime,
 }

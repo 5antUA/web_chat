@@ -2,23 +2,29 @@ use sqlx::{Error as SqlxError, PgPool};
 
 use crate::models::user::{User, UserDTO};
 
-pub async fn get_user_by_id(pool: &PgPool, id: i32) -> Result<User, SqlxError> {
-    let query = "SELECT * FROM users WHERE id = $1";
+pub async fn get_user_by_id(username: String, pool: &PgPool) -> Result<User, SqlxError> {
+    let getted_user = sqlx::query_as::<_, User>(
+        "SELECT * FROM users 
+        WHERE username = $1",
+    )
+    .bind(username)
+    .fetch_one(pool)
+    .await?;
 
-    sqlx::query_as::<_, User>(query)
-        .bind(id)
-        .fetch_one(pool)
-        .await
+    Ok(getted_user)
 }
 
-pub async fn add_user(pool: &PgPool, user_dto: &UserDTO) -> Result<User, SqlxError> {
-    let query =
-        "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *";
+pub async fn add_user(user: &UserDTO, pool: &PgPool) -> Result<User, SqlxError> {
+    let received_user = sqlx::query_as::<_, User>(
+        "INSERT INTO users (username, password_hash, fk_role_id) 
+        VALUES ($1, $2, (SELECT id FROM roles WHERE role_name = $3))
+        RETURNING *",
+    )
+    .bind(&user.username)
+    .bind(&user.password_hash)
+    .bind(&user.role_name)
+    .fetch_one(pool)
+    .await?;
 
-    sqlx::query_as::<_, User>(query)
-        .bind(&user_dto.username)
-        .bind(&user_dto.email)
-        .bind(&user_dto.password_hash)
-        .fetch_one(pool)
-        .await
+    Ok(received_user)
 }

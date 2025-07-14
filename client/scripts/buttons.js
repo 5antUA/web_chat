@@ -54,9 +54,9 @@ registerBtn.addEventListener("click", function () {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            username, // unique username
-            email: "uniqueLogin", // unique login
+            username,
             password_hash: "sexpass",
+            role_name: "User",
         }),
     })
         .then((data) => data.json())
