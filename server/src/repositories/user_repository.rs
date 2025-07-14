@@ -1,6 +1,6 @@
-use sqlx::{Error as SqlxError, PgPool};
-
 use crate::models::user::{User, UserDTO};
+
+use sqlx::{Error as SqlxError, PgPool};
 
 pub async fn get_user_by_id(username: String, pool: &PgPool) -> Result<User, SqlxError> {
     let getted_user = sqlx::query_as::<_, User>(

@@ -1,8 +1,7 @@
-use actix_web::{HttpResponse, Responder, web};
-
 use crate::{AppData, models::user::UserDTO, services::user_service};
 
-#[actix_web::get("/users/{username}")]
+use actix_web::{HttpResponse, Responder, web};
+
 pub async fn get_user_by_username(
     path_data: web::Path<String>,
     app_data: web::Data<AppData>,
@@ -16,7 +15,6 @@ pub async fn get_user_by_username(
     }
 }
 
-#[actix_web::post("/users/register")]
 pub async fn add_user(
     user_data: web::Json<UserDTO>,
     app_data: web::Data<AppData>,

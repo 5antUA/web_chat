@@ -1,13 +1,14 @@
 pub mod controllers;
 pub mod models;
 pub mod repositories;
+pub mod routers;
 pub mod services;
+
+use crate::routers::user_router;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
 use sqlx::{PgPool, postgres::PgPoolOptions};
-
-use crate::controllers::user_controller;
 
 pub struct AppData {
     pub app_name: String,
@@ -22,18 +23,9 @@ pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
 
     HttpServer::new(move || {
         App::new()
-            .wrap(
-                Cors::default()
-                    .allow_any_origin()
-                    .allow_any_header() 
-                    .allow_any_method(),
-            )
+            .wrap(Cors::permissive())
             .app_data(app_data.clone())
-            .service(
-                web::scope("/api")
-                    .service(user_controller::get_user_by_username)
-                    .service(user_controller::add_user),
-            )
+            .service(web::scope("/api").configure(user_router::configure_user_routes))
     })
     .bind(("127.0.0.1", 8080))?
     .run()

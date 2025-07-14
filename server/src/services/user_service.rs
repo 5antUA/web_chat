@@ -1,9 +1,9 @@
-use sqlx::PgPool;
-
 use crate::{
     models::user::{User, UserDTO},
     repositories::user_repository,
 };
+
+use sqlx::PgPool;
 
 pub async fn get_user_by_id(username: String, pool: &PgPool) -> Result<User, String> {
     user_repository::get_user_by_id(username, pool)
