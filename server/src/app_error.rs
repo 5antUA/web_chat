@@ -37,7 +37,7 @@ pub enum AppError {
     BadGateway,
 
     #[error("503 Service Unavailable [rost]")]
-    ServiceUnvailable,
+    ServiceUnavailable,
 }
 
 impl ResponseError for AppError {
@@ -60,7 +60,7 @@ impl ResponseError for AppError {
             AppError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::NotImplemented => StatusCode::NOT_IMPLEMENTED,
             AppError::BadGateway => StatusCode::BAD_GATEWAY,
-            AppError::ServiceUnvailable => StatusCode::SERVICE_UNAVAILABLE,
+            AppError::ServiceUnavailable => StatusCode::SERVICE_UNAVAILABLE,
         }
     }
 }

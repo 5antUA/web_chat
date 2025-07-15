@@ -11,7 +11,7 @@ pub async fn get_user(
     let pool = &app_data.pool;
 
     let received_user = user_service::get_user(username, pool).await?;
-    
+
     Ok(HttpResponse::Ok().json(received_user))
 }
 
