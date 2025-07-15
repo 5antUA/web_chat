@@ -26,3 +26,17 @@ pub async fn add_user(
 
     Ok(HttpResponse::Created().json(received_user))
 }
+
+pub async fn update_user(
+    path_data: web::Path<String>,
+    app_data: web::Data<AppData>,
+    updated_user: web::Json<UserDTO>,
+) -> Result<impl Responder, AppError> {
+    let username = path_data.into_inner();
+    let pool = &app_data.pool;
+    let user = updated_user.into_inner();
+
+    let received_user = user_service::update_user(&user, pool).await?;
+
+    Ok(HttpResponse::Ok().json(received_user))
+}

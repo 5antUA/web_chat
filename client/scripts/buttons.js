@@ -69,13 +69,20 @@ registerBtn.addEventListener("click", function () {
             role_name: "User",
         }),
     })
-        .then((data) => data.json())
-        .then(
-            (data) =>
-                (userInfo.textContent = `Успішна реєстрація, ${data.username}!`)
-        )
-        .catch((_) => {
+        .then((res) => {
+            if (!res.ok) {
+                return res.text().then((text) => {
+                    throw new Error(`HTTP ${text}`);
+                });
+            }
+            return res.json();
+        })
+        .then((data) => {
+            userInfo.textContent = `Успішна реєстрація, ${data.username}!`;
+        })
+        .catch((error) => {
             userInfo.textContent = "Користувач з таким іменем вже існує!";
+            console.error("Помилка:", error.message);
         });
 });
 
