@@ -3,7 +3,7 @@ use crate::models::user::{User, UserDTO};
 use sqlx::{Error as SqlxError, PgPool};
 
 pub async fn get_user(username: String, pool: &PgPool) -> Result<User, SqlxError> {
-    let getted_user = sqlx::query_as::<_, User>(
+    let received_user = sqlx::query_as::<_, User>(
         "SELECT * FROM users 
         WHERE username = $1",
     )
@@ -11,7 +11,7 @@ pub async fn get_user(username: String, pool: &PgPool) -> Result<User, SqlxError
     .fetch_one(pool)
     .await?;
 
-    Ok(getted_user)
+    Ok(received_user)
 }
 
 pub async fn add_user(user: &UserDTO, pool: &PgPool) -> Result<User, SqlxError> {

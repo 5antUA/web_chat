@@ -32,10 +32,20 @@ loginBtn.addEventListener("click", function () {
     }
 
     fetch(concatPath(`/users/${name}`))
-        .then((data) => data.json())
-        .then((data) => (userInfo.textContent = `Вітаємо, ${data.username}!`))
-        .catch((_) => {
+        .then((res) => {
+            if (!res.ok) {
+                return res.text().then((text) => {
+                    throw new Error(`HTTP ${text}`);
+                });
+            }
+            return res.json();
+        })
+        .then((data) => {
+            userInfo.textContent = `Вітаємо, ${data.username}!`;
+        })
+        .catch((error) => {
             userInfo.textContent = "Вибачте, такого користувача не знайдено.";
+            console.error("Помилка:", error.message);
         });
 });
 

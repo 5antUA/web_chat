@@ -3,9 +3,11 @@ pub mod models;
 pub mod repositories;
 pub mod routers;
 pub mod services;
+pub mod app_error;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
+use anyhow::Result;
 use sqlx::{PgPool, postgres::PgPoolOptions};
 
 pub struct AppData {
@@ -13,7 +15,7 @@ pub struct AppData {
     pub pool: PgPool,
 }
 
-pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
+pub async fn run(pool: PgPool) -> Result<()> {
     let app_data = web::Data::new(AppData {
         app_name: String::from("web_chat"),
         pool,
@@ -27,10 +29,12 @@ pub async fn run(pool: PgPool) -> Result<(), std::io::Error> {
     })
     .bind(("127.0.0.1", 8080))?
     .run()
-    .await
+    .await?;
+
+    anyhow::Ok(())
 }
 
-pub async fn establish_connection() -> Result<PgPool, Box<dyn std::error::Error>> {
+pub async fn establish_connection() -> Result<PgPool> {
     let database_url = std::env::var("DATABASE_URL")?;
     let pg_pool = PgPoolOptions::new()
         .max_connections(5)
