@@ -18,12 +18,11 @@ pub async fn get_user(
 pub async fn add_user(
     user_data: web::Json<UserDTO>,
     app_data: web::Data<AppData>,
-) -> impl Responder {
+) -> Result<impl Responder, AppError> {
     let user_data = user_data.into_inner();
     let pool = &app_data.pool;
 
-    match user_service::add_user(&user_data, pool).await {
-        Ok(user) => HttpResponse::Created().json(user),
-        Err(error) => HttpResponse::Conflict().body(error.to_string()),
-    }
+    let received_user = user_service::add_user(&user_data, pool).await?;
+
+    Ok(HttpResponse::Created().json(received_user))
 }
