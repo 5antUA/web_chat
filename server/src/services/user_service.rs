@@ -40,23 +40,3 @@ pub async fn login_user(user: &UserDTO, pool: &PgPool) -> Result<bool, AppError>
         Err(error) => Err(error),
     }
 }
-
-// fn match_responce<T>(result: Result<T, sqlx::Error>) -> Result<T, AppError> {
-//     use sqlx::Error;
-
-//     match result {
-//         Ok(user) => Ok(user),
-//         Err(Error::RowNotFound) => Err(AppError::NotFound),
-//         Err(Error::Database(db_error)) => {
-//             let db_code = db_error.code().unwrap_or_default();
-
-//             match db_code.as_ref() {
-//                 "23502" => Err(AppError::BadRequest), // спроба впихнути NULL
-//                 "23503" => Err(AppError::BadRequest), // неіснуючий елемент
-//                 "23505" => Err(AppError::Conflict),   // дублікат значення
-//                 _ => Err(AppError::InternalServerError),
-//             }
-//         }
-//         _ => Err(AppError::InternalServerError),
-//     }
-// }
