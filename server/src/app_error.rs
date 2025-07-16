@@ -2,9 +2,8 @@ use actix_web::{
     HttpResponse, ResponseError,
     http::{StatusCode, header::ContentType},
 };
-use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Debug, thiserror::Error)]
 pub enum AppError {
     #[error("400 Bad Request [rost]")]
     BadRequest,
@@ -61,6 +60,25 @@ impl ResponseError for AppError {
             AppError::NotImplemented => StatusCode::NOT_IMPLEMENTED,
             AppError::BadGateway => StatusCode::BAD_GATEWAY,
             AppError::ServiceUnavailable => StatusCode::SERVICE_UNAVAILABLE,
+        }
+    }
+}
+
+impl From<sqlx::Error> for AppError {
+    fn from(error: sqlx::Error) -> Self {
+        match error {
+            sqlx::Error::RowNotFound => AppError::NotFound,
+            sqlx::Error::Database(db_error) => {
+                let db_code = db_error.code().unwrap_or_default();
+
+                match db_code.as_ref() {
+                    "23502" => AppError::BadRequest, // спроба впихнути NULL
+                    "23503" => AppError::BadRequest, // неіснуючий елемент
+                    "23505" => AppError::Conflict,   // дублікат значення
+                    _ => AppError::InternalServerError,
+                }
+            }
+            _ => AppError::InternalServerError,
         }
     }
 }

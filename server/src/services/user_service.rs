@@ -10,7 +10,7 @@ use sqlx::PgPool;
 // get user
 pub async fn get_user(username: String, pool: &PgPool) -> Result<User, AppError> {
     let sql_result = user_repository::get_user(&username, pool).await;
-    match_responce(sql_result)
+    sql_result.map_err(AppError::from)
 }
 
 // add or register user
@@ -23,14 +23,14 @@ pub async fn add_user(user: &mut UserDTO, pool: &PgPool) -> Result<User, AppErro
     user.password_hash = hashed_password;
 
     let sql_result = user_repository::add_user(&user, pool).await;
-    match_responce(sql_result)
+    sql_result.map_err(AppError::from)
 }
 
 // login user
 pub async fn login_user(user: &UserDTO, pool: &PgPool) -> Result<bool, AppError> {
     let sql_result = user_repository::get_user(&user.username, pool).await;
 
-    match match_responce(sql_result) {
+    match sql_result.map_err(AppError::from) {
         Ok(sql_user) => {
             let login_condition = bcrypt::verify(&user.password_hash, &sql_user.password_hash)
                 .map_err(|_| AppError::Unauthorized)?;
@@ -41,22 +41,22 @@ pub async fn login_user(user: &UserDTO, pool: &PgPool) -> Result<bool, AppError>
     }
 }
 
-fn match_responce<T>(result: Result<T, sqlx::Error>) -> Result<T, AppError> {
-    use sqlx::Error;
+// fn match_responce<T>(result: Result<T, sqlx::Error>) -> Result<T, AppError> {
+//     use sqlx::Error;
 
-    match result {
-        Ok(user) => Ok(user),
-        Err(Error::RowNotFound) => Err(AppError::NotFound),
-        Err(Error::Database(db_error)) => {
-            let db_code = db_error.code().unwrap_or_default();
+//     match result {
+//         Ok(user) => Ok(user),
+//         Err(Error::RowNotFound) => Err(AppError::NotFound),
+//         Err(Error::Database(db_error)) => {
+//             let db_code = db_error.code().unwrap_or_default();
 
-            match db_code.as_ref() {
-                "23502" => Err(AppError::BadRequest), // спроба впихнути NULL
-                "23503" => Err(AppError::BadRequest), // неіснуючий елемент
-                "23505" => Err(AppError::Conflict),   // дублікат значення
-                _ => Err(AppError::InternalServerError),
-            }
-        }
-        _ => Err(AppError::InternalServerError),
-    }
-}
+//             match db_code.as_ref() {
+//                 "23502" => Err(AppError::BadRequest), // спроба впихнути NULL
+//                 "23503" => Err(AppError::BadRequest), // неіснуючий елемент
+//                 "23505" => Err(AppError::Conflict),   // дублікат значення
+//                 _ => Err(AppError::InternalServerError),
+//             }
+//         }
+//         _ => Err(AppError::InternalServerError),
+//     }
+// }
