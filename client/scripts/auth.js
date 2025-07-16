@@ -8,22 +8,55 @@ let authBtn = document.getElementById("authBtn");
 let registerBtn = document.getElementById("registerBtn");
 
 authBtn.addEventListener("click", () => {
-    let username = usernameForm.value;
+    const username = usernameForm.value.trim();
+    const password_hash = passwordForm.value.trim();
 
-    fetch(concatPath(`/users/${username}`))
-        .then((responce) => {
-            if (responce.ok) {
-                // go to profile...
+    if (!username || !password_hash) {
+        mainText.textContent = "Введіть обов'язкові дані!";
+        return;
+    }
+
+    fetch(concatPath("/users/login"), {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            username,
+            password_hash,
+            role_name: "User",
+        }),
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                throw new Error(
+                    `Сервер відповів з помилкою: ${response.status}`
+                );
+            }
+
+            const isValid = await response.json();
+
+            if (isValid === true) {
+                window.location.href =
+                    "chat.html?user=" + encodeURIComponent(username);
+            } else {
+                mainText.textContent = "Невірний логін або пароль!";
             }
         })
         .catch((error) => {
-            console.error(`Oops... you catch auth error: ${error}`);
+            mainText.textContent = "Невірний логін або пароль!";
+            console.error("Oops... you have LOGIN error:", error.message);
         });
 });
 
 registerBtn.addEventListener("click", () => {
-    let username = usernameForm.value;
-    let password_hash = passwordForm.value;
+    let username = usernameForm.value.trim();
+    let password_hash = passwordForm.value.trim();
+
+    if (!username || !password_hash) {
+        mainText.textContent = "Введіть обов'язкові дані!";
+        return;
+    }
 
     fetch(concatPath("/users/register"), {
         method: "POST",
@@ -65,6 +98,6 @@ registerBtn.addEventListener("click", () => {
                         error.message || error
                     }`;
             }
-            console.error("Register error:", error);
+            console.error("Oops... you have REG error:", error.message);
         });
 });

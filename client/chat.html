@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Чат</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="chat.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="form-title">
+                Привіт, <span id="nickname">User123</span>!
+            </h1>
+
+            <form class="chat-form" onsubmit="return false;">
+                <input
+                    type="text"
+                    id="message-input"
+                    placeholder="Введіть повідомлення..."
+                    autocomplete="off"
+                />
+                <button type="submit" id="send-btn">Надіслати</button>
+            </form>
+
+            <textarea id="chat-window" readonly></textarea>
+
+            <div class="button-row">
+                <button id="profile-btn">Профіль</button>
+                <button id="settings-btn">Налаштування</button>
+                <button id="logout-btn">Вийти</button>
+            </div>
+        </div>
+    </body>
+</html>

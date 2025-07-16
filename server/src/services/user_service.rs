@@ -4,18 +4,41 @@ use crate::{
     repositories::user_repository,
 };
 
+use bcrypt::DEFAULT_COST;
 use sqlx::PgPool;
 
+// get user
 pub async fn get_user(username: String, pool: &PgPool) -> Result<User, AppError> {
-    match_responce(user_repository::get_user(username, pool).await)
+    let sql_result = user_repository::get_user(&username, pool).await;
+    match_responce(sql_result)
 }
 
-pub async fn add_user(user: &UserDTO, pool: &PgPool) -> Result<User, AppError> {
-    match_responce(user_repository::add_user(user, pool).await)
+// add or register user
+pub async fn add_user(user: &mut UserDTO, pool: &PgPool) -> Result<User, AppError> {
+    let hashed_password = match bcrypt::hash(&user.password_hash, DEFAULT_COST) {
+        Ok(pass) => pass,
+        Err(_) => return Err(AppError::InternalServerError),
+    };
+
+    user.password_hash = hashed_password;
+
+    let sql_result = user_repository::add_user(&user, pool).await;
+    match_responce(sql_result)
 }
 
-pub async fn update_user(user: &UserDTO, pool: &PgPool) -> Result<User, AppError> {
-    match_responce(user_repository::update_user(user, pool).await)
+// login user
+pub async fn login_user(user: &UserDTO, pool: &PgPool) -> Result<bool, AppError> {
+    let sql_result = user_repository::get_user(&user.username, pool).await;
+
+    match match_responce(sql_result) {
+        Ok(sql_user) => {
+            let login_condition = bcrypt::verify(&user.password_hash, &sql_user.password_hash)
+                .map_err(|_| AppError::Unauthorized)?;
+
+            Ok(login_condition)
+        }
+        Err(error) => Err(error),
+    }
 }
 
 fn match_responce<T>(result: Result<T, sqlx::Error>) -> Result<T, AppError> {

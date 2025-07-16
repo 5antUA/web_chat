@@ -3,40 +3,38 @@ use crate::{AppData, models::user::UserDTO, services::user_service};
 use crate::app_error::AppError;
 use actix_web::{HttpResponse, Responder, web};
 
+// get user
 pub async fn get_user(
-    path_data: web::Path<String>,
+    user: web::Path<String>,
     app_data: web::Data<AppData>,
 ) -> Result<impl Responder, AppError> {
-    let username = path_data.into_inner();
+    let username = user.into_inner();
     let pool = &app_data.pool;
 
     let received_user = user_service::get_user(username, pool).await?;
-
     Ok(HttpResponse::Ok().json(received_user))
 }
 
+// add or register user
 pub async fn add_user(
+    user_data: web::Json<UserDTO>,
+    app_data: web::Data<AppData>,
+) -> Result<impl Responder, AppError> {
+    let mut user_data = user_data.into_inner();
+    let pool = &app_data.pool;
+
+    let received_user = user_service::add_user(&mut user_data, pool).await?;
+    Ok(HttpResponse::Created().json(received_user))
+}
+
+// login user (sex)
+pub async fn login_user(
     user_data: web::Json<UserDTO>,
     app_data: web::Data<AppData>,
 ) -> Result<impl Responder, AppError> {
     let user_data = user_data.into_inner();
     let pool = &app_data.pool;
 
-    let received_user = user_service::add_user(&user_data, pool).await?;
-
-    Ok(HttpResponse::Created().json(received_user))
-}
-
-pub async fn update_user(
-    path_data: web::Path<String>,
-    app_data: web::Data<AppData>,
-    updated_user: web::Json<UserDTO>,
-) -> Result<impl Responder, AppError> {
-    let username = path_data.into_inner();
-    let pool = &app_data.pool;
-    let user = updated_user.into_inner();
-
-    let received_user = user_service::update_user(&user, pool).await?;
-
-    Ok(HttpResponse::Ok().json(received_user))
+    let result = user_service::login_user(&user_data, &pool).await?;
+    Ok(HttpResponse::Ok().json(result))
 }
