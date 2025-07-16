@@ -2,40 +2,32 @@
 <html lang="uk">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Форма Чату</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Авторизація в чаті</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
         <div class="container">
-            <form class="auth-form" onsubmit="return false;">
-                <input
-                    type="text"
-                    placeholder="Введіть нікнейм"
-                    id="nickname"
-                />
-                <button type="submit" id="loginBtn">Авторизуватися</button>
-                <button type="button" id="registerBtn">Реєстрація</button>
-            </form>
+            <h2 id="mainText" class="form-title">Авторизація в чаті</h2>
 
-            <!-- username + кнопка "Профіль" -->
-            <div class="user-header">
-                <div id="userDisplay" class="user-display"></div>
-                <button class="btn profile-btn">Профіль</button>
+            <div class="auth-form">
+                <input id="usernameInput" type="text" placeholder="Логін" />
             </div>
 
-            <p id="chatOutput"></p>
-
-            <form class="message-form" onsubmit="return false;">
+            <div class="auth-form">
                 <input
-                    type="text"
-                    id="messageInput"
-                    placeholder="Введіть повідомлення"
+                    id="passwordInput"
+                    type="password"
+                    placeholder="Пароль"
                 />
-                <button type="submit" id="sendBtn">Відправити</button>
-            </form>
+            </div>
+
+            <div class="button-row">
+                <button id="authBtn">Авторизуватися</button>
+                <button id="registerBtn">Зареєструватися</button>
+            </div>
         </div>
 
-        <script type="module" src="./scripts/buttons.js"></script>
+        <script type="module" src="./scripts/auth.js"></script>
     </body>
 </html>

@@ -9,19 +9,28 @@
     <body>
         <div class="container">
             <div class="profile-box">
-                <img src="avatar.png" alt="test avarar" class="avatar" />
+                <img
+                    id="profileImage"
+                    src="avatar.png"
+                    alt="test avarar"
+                    class="avatar"
+                />
 
                 <div class="profile-info">
-                    <h2 class="username">test username</h2>
-                    <p class="reg-date">test reg date</p>
-                    <p class="bio">test bio</p>
+                    <h2 id="usernameLabel" class="username">test username</h2>
+                    <p id="regDateLabel" class="reg-date">test reg date</p>
+                    <p id="bioLabel" class="bio">test bio</p>
 
                     <div class="profile-buttons">
-                        <button class="btn">Налаштування</button>
-                        <button class="btn">Повернутися</button>
+                        <button id="settingsBtn" class="btn">
+                            Налаштування
+                        </button>
+                        <button id="backBtn" class="btn">Повернутися</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script src="./scripts/load_profile.js"></script>
     </body>
 </html>
