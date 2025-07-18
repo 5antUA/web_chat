@@ -11,3 +11,9 @@ pub struct Profile {
     pub avatar_url: Option<String>,
     pub created_at: NaiveDateTime,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ProfileDTO {
+    pub bio: Option<String>,
+    pub avatar_url: Option<String>,
+}
