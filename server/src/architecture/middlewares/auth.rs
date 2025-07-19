@@ -1,4 +1,4 @@
-use crate::{AppData, app_error::AppError, utils::jwt, models::user::UserJWT};
+use crate::{AppData, app_error::AppError, models::user::UserJWT, utils::jwt};
 
 use actix_web::{
     Error,
@@ -28,9 +28,9 @@ pub async fn verify_jwt(
         .filter(|t| !t.trim().is_empty())
         .ok_or(AppError::Unauthorized)?;
 
-    _ = jwt::decode_jwt::<UserJWT>(token, &app_data.jwt_secret)
+    let data = jwt::decode_jwt::<UserJWT>(token, &app_data.jwt_secret)
         .await
-        .map_err(|_| AppError::Unauthorized)?;
+        .map_err(AppError::from)?;
 
     next.call(req).await
 }

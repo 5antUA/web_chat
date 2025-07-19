@@ -2,6 +2,7 @@ use actix_web::{
     HttpResponse, ResponseError,
     http::{StatusCode, header::ContentType},
 };
+use jsonwebtoken::errors::ErrorKind as JWTErrorKind;
 
 #[derive(Debug, thiserror::Error)]
 pub enum AppError {
@@ -78,6 +79,22 @@ impl From<sqlx::Error> for AppError {
                     _ => AppError::InternalServerError,
                 }
             }
+            _ => AppError::InternalServerError,
+        }
+    }
+}
+
+impl From<jsonwebtoken::errors::Error> for AppError {
+    fn from(error: jsonwebtoken::errors::Error) -> Self {
+        match error.kind() {
+            JWTErrorKind::InvalidToken
+            | JWTErrorKind::InvalidIssuer
+            | JWTErrorKind::ExpiredSignature
+            | JWTErrorKind::InvalidAudience
+            | JWTErrorKind::InvalidSubject
+            | JWTErrorKind::ImmatureSignature
+            | JWTErrorKind::InvalidAlgorithm
+            | JWTErrorKind::MissingRequiredClaim(_) => AppError::Unauthorized,
             _ => AppError::InternalServerError,
         }
     }
