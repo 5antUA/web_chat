@@ -1,6 +1,8 @@
 pub mod app_error;
-pub mod controllers;
 pub mod models;
+
+pub mod controllers;
+pub mod middlewares;
 pub mod repositories;
 pub mod routers;
 pub mod services;
@@ -11,13 +13,13 @@ use anyhow::Result;
 use sqlx::{PgPool, postgres::PgPoolOptions};
 
 pub struct AppData {
-    pub app_name: String,
+    pub jwt_secret: String,
     pub pool: PgPool,
 }
 
 pub async fn run(pool: PgPool) -> Result<()> {
     let app_data = web::Data::new(AppData {
-        app_name: String::from("web_chat"),
+        jwt_secret: std::env::var("JWT_SECRET")?,
         pool,
     });
 

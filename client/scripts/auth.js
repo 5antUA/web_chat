@@ -24,7 +24,7 @@ authBtn.addEventListener("click", () => {
         body: JSON.stringify({
             username,
             password_hash,
-            role_name: "User",
+            role_name: "user",
         }),
     })
         .then(async (response) => {
@@ -44,8 +44,7 @@ authBtn.addEventListener("click", () => {
             }
         })
         .catch((error) => {
-            mainText.textContent = "Невірний логін або пароль!";
-            console.error("Oops... you have LOGIN error:", error.message);
+            switch_errors(error, "LOGIN");
         });
 });
 
@@ -66,7 +65,7 @@ registerBtn.addEventListener("click", () => {
         body: JSON.stringify({
             username,
             password_hash,
-            role_name: "User",
+            role_name: "user",
         }),
     })
         .then(async (res) => {
@@ -81,23 +80,24 @@ registerBtn.addEventListener("click", () => {
             usernameForm.value = "";
             passwordForm.value = "";
         })
-        .catch((error) => {
-            switch (error.status) {
-                case 400:
-                    mainText.textContent = "Дані заповнені некоректно!";
-                    break;
-                case 409:
-                    mainText.textContent =
-                        "Користувач з таким іменем вже існує!";
-                    break;
-                case 500:
-                    mainText.textContent = "Сервер помер. Спробуй пізніше.";
-                    break;
-                default:
-                    mainText.textContent = `Невідома помилка: ${
-                        error.message || error
-                    }`;
-            }
-            console.error("Oops... you have REG error:", error.message);
-        });
+        .catch((error) => switch_errors(error, "REG"));
 });
+
+function switch_errors(error, errorType) {
+    switch (error.status) {
+        case 400:
+            mainText.textContent = "Дані заповнені некоректно!";
+            break;
+        case 409:
+            mainText.textContent = "Користувач з таким іменем вже існує!";
+            break;
+        case 500:
+            mainText.textContent = "Сервер помер. Спробуй пізніше.";
+            break;
+        default:
+            mainText.textContent = `Невідома помилка: ${
+                error.message || error
+            }`;
+    }
+    console.error(`Oops... you have ${errorType} error: ${error.message}`);
+}

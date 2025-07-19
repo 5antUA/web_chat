@@ -15,15 +15,15 @@ pub async fn get_user(
     Ok(HttpResponse::Ok().json(received_user))
 }
 
-// add or register user
-pub async fn add_user(
+// register user
+pub async fn register_user(
     user_data: web::Json<UserDTO>,
     app_data: web::Data<AppData>,
 ) -> Result<impl Responder, AppError> {
     let mut user_data = user_data.into_inner();
     let pool = &app_data.pool;
 
-    let received_user = user_service::add_user(&mut user_data, pool).await?;
+    let received_user = user_service::register_user(&mut user_data, pool).await?;
     Ok(HttpResponse::Created().json(received_user))
 }
 

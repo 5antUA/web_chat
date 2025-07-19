@@ -13,8 +13,8 @@ pub async fn get_user(username: String, pool: &PgPool) -> Result<User, AppError>
     sql_result.map_err(AppError::from)
 }
 
-// add or register user
-pub async fn add_user(user: &mut UserDTO, pool: &PgPool) -> Result<User, AppError> {
+// register user
+pub async fn register_user(user: &mut UserDTO, pool: &PgPool) -> Result<User, AppError> {
     let hashed_password = match bcrypt::hash(&user.password_hash, DEFAULT_COST) {
         Ok(pass) => pass,
         Err(_) => return Err(AppError::InternalServerError),
