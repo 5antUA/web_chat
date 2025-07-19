@@ -1,16 +1,15 @@
-pub mod app_error;
+pub mod architecture;
 pub mod models;
+pub mod utils;
 
-pub mod controllers;
-pub mod middlewares;
-pub mod repositories;
-pub mod routers;
-pub mod services;
+pub mod app_error;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
 use anyhow::Result;
 use sqlx::{PgPool, postgres::PgPoolOptions};
+
+use crate::architecture::{controllers, middlewares, repositories, routers, services};
 
 pub struct AppData {
     pub jwt_secret: String,

@@ -1,4 +1,4 @@
-use crate::models::user::{User, UserDTO};
+use crate::models::user::{User, UserInfo};
 
 use sqlx::{Error as SqlxError, PgPool};
 
@@ -12,7 +12,7 @@ pub async fn get_user(username: &String, pool: &PgPool) -> Result<User, SqlxErro
     .await
 }
 
-pub async fn add_user(user: &UserDTO, pool: &PgPool) -> Result<User, SqlxError> {
+pub async fn add_user(user: &UserInfo, pool: &PgPool) -> Result<User, SqlxError> {
     sqlx::query_as::<_, User>(
         "INSERT INTO users (username, password_hash, fk_role_id) 
         VALUES ($1, $2, (SELECT id FROM roles WHERE role_name = $3))
