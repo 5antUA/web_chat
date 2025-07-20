@@ -1,6 +1,11 @@
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, TokenData, Validation, errors::Error};
 use serde::{Serialize, de::DeserializeOwned};
 
+#[derive(Serialize)]
+pub struct JsonWebToken {
+    pub token: String,
+}
+
 pub async fn decode_jwt<T>(token: &str, secret: &str) -> Result<TokenData<T>, Error>
 where
     T: DeserializeOwned,

@@ -1,4 +1,4 @@
-import { concatPath } from "./paths.js";
+import { concatPath } from "../utils/paths.js";
 
 let mainText = document.getElementById("mainText");
 let usernameForm = document.getElementById("usernameInput");
@@ -34,14 +34,18 @@ authBtn.addEventListener("click", () => {
                 );
             }
 
-            const isValid = await response.json();
+            const token = await response.json();
 
-            if (isValid === true) {
+            if (token) {
+                console.log(token);
+                localStorage.setItem("jwt", token);
                 window.location.href =
                     "chat.html?user=" + encodeURIComponent(username);
-            } else {
-                mainText.textContent = "Невірний логін або пароль!";
+
+                return;
             }
+
+            mainText.textContent = "Невірний логін або пароль!";
         })
         .catch((error) => {
             switch_errors(error, "LOGIN");
@@ -101,3 +105,25 @@ function switch_errors(error, errorType) {
     }
     console.error(`Oops... you have ${errorType} error: ${error.message}`);
 }
+
+authBtn.addEventListener("click", () => {
+    fetch(concatPath("/profiles/nigger"), {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+        },
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                throw new Error(
+                    `Сервер відповів з помилкою: ${response.status}`
+                );
+            }
+
+            console.log(response.text());
+        })
+        .catch((error) => {
+            switch_errors(error, "LOGIN");
+        });
+});

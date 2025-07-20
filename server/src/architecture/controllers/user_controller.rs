@@ -1,3 +1,4 @@
+use crate::utils::jwt::JsonWebToken;
 use crate::{AppData, models::user::UserInfo, services::user_service};
 
 use crate::app_error::AppError;
@@ -36,5 +37,5 @@ pub async fn login_user(
     let app_data = app_data.into_inner();
 
     let jwt = user_service::login_user(&user_data, &app_data).await?;
-    Ok(HttpResponse::Ok().body(jwt))
+    Ok(HttpResponse::Ok().json(JsonWebToken { token: jwt }))
 }

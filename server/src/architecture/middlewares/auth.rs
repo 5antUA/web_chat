@@ -28,7 +28,7 @@ pub async fn verify_jwt(
         .filter(|t| !t.trim().is_empty())
         .ok_or(AppError::Unauthorized)?;
 
-    let data = jwt::decode_jwt::<UserJWT>(token, &app_data.jwt_secret)
+    let _data = jwt::decode_jwt::<UserJWT>(token, &app_data.jwt_secret)
         .await
         .map_err(AppError::from)?;
 
