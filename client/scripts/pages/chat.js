@@ -16,5 +16,5 @@ const jwt_payload = jwt_parse(localStorage.getItem("jwt"));
 loadPage();
 
 function loadPage() {
-    nicknameText.textContent = jwt_payload.username;
+    nicknameText.textContent = `${jwt_payload.username} (${jwt_payload.role_name})`;
 }

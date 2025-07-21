@@ -23,20 +23,20 @@ pub struct UserInfo {
 pub struct UserJWT {
     pub sub: Uuid, // Subject
     pub username: String,
-    pub role_id: Uuid,
+    pub role_name: String,
     pub iat: usize, // Issued At
     pub exp: usize, // Expiration Time
 }
 
 impl UserJWT {
-    pub fn configure(user: &User) -> Self {
+    pub fn configure(user: &User, role_name: String) -> Self {
         let now = Utc::now();
         let expire = Duration::hours(24);
 
         Self {
             sub: user.id,
             username: user.username.clone(),
-            role_id: user.fk_role_id,
+            role_name,
             iat: now.timestamp() as usize,
             exp: (now + expire).timestamp() as usize,
         }

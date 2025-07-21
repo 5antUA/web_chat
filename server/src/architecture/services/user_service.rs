@@ -36,7 +36,10 @@ pub async fn login_user(user: &UserInfo, app_data: &Arc<AppData>) -> Result<Stri
         .map_err(|_| AppError::Unauthorized)?;
 
     if is_verify {
-        let claims = UserJWT::configure(&received_user);
+        let role_name =
+            user_repository::get_role_name(&received_user.fk_role_id, &app_data.pool).await?;
+
+        let claims = UserJWT::configure(&received_user, role_name);
         let token = jwt::encode_jwt(&claims, &app_data.jwt_secret)
             .await
             .map_err(|_| AppError::InternalServerError)?;
