@@ -11,10 +11,18 @@ let profileButton = document.getElementById("profile-btn");
 let settingsButton = document.getElementById("settings-btn");
 let logoutButton = document.getElementById("logout-btn");
 
-const jwt_payload = jwt_parse(localStorage.getItem("jwt"));
+const jwt = localStorage.getItem("jwt");
+const jwt_payload = jwt_parse(jwt);
 
 loadPage();
 
 function loadPage() {
+    fetch(concatPath("/profiles/some"), {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${jwt}`,
+        },
+    });
+
     nicknameText.textContent = `${jwt_payload.username} (${jwt_payload.role_name})`;
 }

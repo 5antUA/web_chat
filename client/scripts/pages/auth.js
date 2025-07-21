@@ -29,9 +29,8 @@ authButton.addEventListener("click", () => {
     })
         .then(async (response) => {
             if (!response.ok) {
-                throw new Error(
-                    `Сервер відповів з помилкою: ${response.status}`
-                );
+                const errorText = await response.text();
+                throw { status: response.status, message: errorText };
             }
 
             const json_token = await response.json();
@@ -91,6 +90,9 @@ function switch_errors(error, errorType) {
         case 400:
             mainText.textContent = "Дані заповнені некоректно!";
             break;
+        case 401:
+            mainText.textContent = "Невірний логін або пароль!";
+            break;
         case 409:
             mainText.textContent = "Користувач з таким іменем вже існує!";
             break;
@@ -102,5 +104,5 @@ function switch_errors(error, errorType) {
                 error.message || error
             }`;
     }
-    console.error(`Oops... you have ${errorType} error: ${error.message}`);
+    // console.error(`Oops... you have ${errorType} error: ${error.message}, status: ${error.status}`);
 }

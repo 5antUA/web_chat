@@ -9,7 +9,7 @@ use actix_web::{App, HttpServer, web};
 use anyhow::Result;
 use sqlx::{PgPool, postgres::PgPoolOptions};
 
-use crate::architecture::{controllers, middlewares, repositories, routers, services};
+use crate::architecture::{controllers, repositories, routers, services};
 
 pub struct AppData {
     pub jwt_secret: String,
