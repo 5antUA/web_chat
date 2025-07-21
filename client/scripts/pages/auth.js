@@ -4,10 +4,10 @@ let mainText = document.getElementById("mainText");
 let usernameForm = document.getElementById("usernameInput");
 let passwordForm = document.getElementById("passwordInput");
 
-let authBtn = document.getElementById("authBtn");
-let registerBtn = document.getElementById("registerBtn");
+let authButton = document.getElementById("authBtn");
+let registerButton = document.getElementById("registerBtn");
 
-authBtn.addEventListener("click", () => {
+authButton.addEventListener("click", () => {
     const username = usernameForm.value.trim();
     const password_hash = passwordForm.value.trim();
 
@@ -34,13 +34,12 @@ authBtn.addEventListener("click", () => {
                 );
             }
 
-            const token = await response.json();
+            const json_token = await response.json();
+            const token = json_token.token;
 
-            if (token) {
-                console.log(token);
+            if (json_token) {
                 localStorage.setItem("jwt", token);
-                window.location.href =
-                    "chat.html?user=" + encodeURIComponent(username);
+                window.location.href = "chat.html";
 
                 return;
             }
@@ -52,7 +51,7 @@ authBtn.addEventListener("click", () => {
         });
 });
 
-registerBtn.addEventListener("click", () => {
+registerButton.addEventListener("click", () => {
     let username = usernameForm.value.trim();
     let password_hash = passwordForm.value.trim();
 
@@ -105,25 +104,3 @@ function switch_errors(error, errorType) {
     }
     console.error(`Oops... you have ${errorType} error: ${error.message}`);
 }
-
-authBtn.addEventListener("click", () => {
-    fetch(concatPath("/profiles/nigger"), {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
-        },
-    })
-        .then(async (response) => {
-            if (!response.ok) {
-                throw new Error(
-                    `Сервер відповів з помилкою: ${response.status}`
-                );
-            }
-
-            console.log(response.text());
-        })
-        .catch((error) => {
-            switch_errors(error, "LOGIN");
-        });
-});
