@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Авторизація в чаті</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="auth.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h2 id="mainText" class="form-title">Авторизація в чаті</h2>
+
+            <div class="auth-form">
+                <input id="usernameInput" type="text" placeholder="Логін" />
+            </div>
+
+            <div class="auth-form">
+                <input
+                    id="passwordInput"
+                    type="password"
+                    placeholder="Пароль"
+                />
+            </div>
+
+            <div class="button-row">
+                <button id="authBtn">Авторизуватися</button>
+                <button id="registerBtn">Зареєструватися</button>
+            </div>
+        </div>
+
+        <script type="module" src="./scripts/pages/auth.js"></script>
+    </body>
+</html>
